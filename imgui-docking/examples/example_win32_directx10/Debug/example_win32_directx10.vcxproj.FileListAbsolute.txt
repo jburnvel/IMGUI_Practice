@@ -1,1 +1,0 @@
-D:\Burnes\Programacion\DesktopImGUI\imgui-docking\examples\example_win32_directx10\Debug\example_win32_directx10.exe

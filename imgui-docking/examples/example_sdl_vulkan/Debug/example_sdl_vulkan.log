@@ -1,7 +1,0 @@
-﻿  imgui_impl_sdl.cpp
-D:\Burnes\Programacion\DesktopImGUI\imgui-docking\backends\imgui_impl_sdl.cpp(74,10): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
-  imgui_impl_vulkan.cpp
-D:\Burnes\Programacion\DesktopImGUI\imgui-docking\backends\imgui_impl_vulkan.h(46,10): fatal error C1083: Cannot open include file: 'vulkan/vulkan.h': No such file or directory
-  main.cpp
-D:\Burnes\Programacion\DesktopImGUI\imgui-docking\backends\imgui_impl_vulkan.h(46,10): fatal error C1083: Cannot open include file: 'vulkan/vulkan.h': No such file or directory
-  Generating Code...

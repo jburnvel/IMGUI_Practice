@@ -1,1 +1,0 @@
-D:\Burnes\Programacion\DesktopImGUI\imgui-docking\examples\example_glfw_opengl2\Debug\example_glfw_opengl2.exe
