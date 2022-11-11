@@ -6,12 +6,15 @@
 // This is because we need ImTextureID to carry a 64-bit value and by default ImTextureID is defined as void*.
 // This define is set in the example .vcxproj file and need to be replicated in your app or by adding it to your imconfig.h file.
 
+#include "./GuiApplication.h"
+#include <windows.h>
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx12.h"
 #include <d3d12.h>
 #include <dxgi1_4.h>
 #include <tchar.h>
+
 
 #ifdef _DEBUG
 #define DX12_ENABLE_DEBUG_LAYER
@@ -59,6 +62,11 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 // Main code
 int main(int, char**)
 {
+    GUIApp::GuiApplication* MainGUIApp;
+    //---------------------------------FreeConsole();
+    
+    //Hide CMD Window
+    //#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
     // Create application window
     //ImGui_ImplWin32_EnableDpiAwareness();
     WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, L"ImGui Example", NULL };
@@ -74,7 +82,7 @@ int main(int, char**)
     }
 
     // Show the window
-    ::ShowWindow(hwnd, SW_SHOWDEFAULT);
+    ::ShowWindow(hwnd, SW_MAXIMIZE); // SW_SHOWDEFAULT);
     ::UpdateWindow(hwnd);
 
     // Setup Dear ImGui context
@@ -128,6 +136,9 @@ int main(int, char**)
     bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+    //Create variable of GUIApplication
+    MainGUIApp = new GUIApp::GuiApplication();    
+    
     // Main loop
     bool done = false;
     while (!done)
@@ -150,6 +161,8 @@ int main(int, char**)
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
 
+        MainGUIApp->DrawAppGUI();
+        
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);
@@ -186,7 +199,7 @@ int main(int, char**)
                 show_another_window = false;
             ImGui::End();
         }
-
+        
         // Rendering
         ImGui::Render();
 
