@@ -24,7 +24,9 @@ GUIApp::GuiApplication::~GuiApplication()
 }
 
 void GUIApp::GuiApplication::DrawAppGUI()
-{    
+{
+
+
     DockAndMainMenu();
     ConsolePanel(&value);
     ConsoleWindow(&value);
@@ -114,6 +116,17 @@ void GUIApp::GuiApplication::DockAndMainMenu()
     ImGui::End();
 }
 
+
+void GUIApp::GuiApplication::AlignForWidth(float width, float alignment = 0.5f)
+{
+    ImGuiStyle& style = ImGui::GetStyle();
+    float avail = ImGui::GetContentRegionAvail().x;
+    float off = (avail - width) * alignment;
+    if (off > 0.0f)
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+}
+
+
 void GUIApp::GuiApplication::ConsoleWindow(float* _value)
 {
     ImGui::Begin("Panel");
@@ -149,61 +162,92 @@ void GUIApp::GuiApplication::ConsoleWindow(float* _value)
 
 ImGui::Begin("TickTacToe");
 
+//ImGuiStyle& style = ImGui::GetStyle();
+float width = 300.0f;
+AlignForWidth(width,0.5f);
 
-//
-//string nums = "" + tablero[0][0];
-//if (ImGui::Button(nums.c_str(), ImVec2(100, 100)))
-//{
-//    tablero[2][2] = jugador;
-//    jugador = turno ? 'X' : 'O';
-//    turno = !turno;
-//}
+ImGui::BeginGroup();
+    char buf[32];
+    sprintf(buf, "Turno de las %c", jugador);
+    ImGui::Text(buf);
 
-char buf[32];
-sprintf(buf, "Turno de las %c", jugador);
-ImGui::Text(buf);
-    for (auto i = 0; i < 3; i++)
-    {
-        string num = " a ";
-
-        for (auto j = 0; j < 3; j++)
+        for (auto i = 0; i < 3; i++)
         {
-            num = tablero[i][j];//to_string(i) + " - " + to_string(j);
+            string num = " a ";
 
-            ImGui::PushID(i*3+j);
-            if (ImGui::Button((num).c_str(), ImVec2(100, 100)))
+            for (auto j = 0; j < 3; j++)
             {
-                if (endGame==false && tablero[i][j] == '_') {
-                    tablero[i][j] = jugador;
-                    turno = !turno;
-                    jugador = turno ? 'X' : 'O';
-                }
-            }
-            ImGui::PopID();
-            if (j < 3 - 1)
-                ImGui::SameLine();
-        }
-    }
-    char ganador = CheckGanador();
-    if (ganador != '_') {
-        char buf[32];
-        sprintf(buf, " Ganador %c", ganador);
-        ImGui::Text(buf);
-        endGame = true;
-    }
+                num = tablero[i][j];//to_string(i) + " - " + to_string(j);
 
-    if (CheckEmpate() == true && ganador == '_') {
-        char buf[32];
-        sprintf(buf, " Empate ");
-        ImGui::Text(buf);
-        endGame = true;
-    }
-    if (endGame) {
-        if (ImGui::Button("Reset Tick Tac Toe Game",ImVec2(350,50)))
-        {
-            ResetTicTackToe();
+
+                ImGui::PushID(i*3+j);
+                if (num == "_") {
+                    
+                    if (!endGame){
+                        ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.0f, 0.0f, 1.0f));
+                        if (turno) {
+                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(4 / 7.0f, 0.7f, 0.7f));
+                            ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(4 / 7.0f, 0.8f, 0.8f));
+                        }
+                        else {
+                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
+                            ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
+                        }
+                    }
+                    else {
+                        ImGui::PushStyleColor(ImGuiCol_Button,          (ImVec4)ImColor::HSV(0.0f, 0.0f, 0.7f));
+                        ImGui::PushStyleColor(ImGuiCol_ButtonHovered,   (ImVec4)ImColor::HSV(0.0f, 0.0f, 0.7f));
+                        ImGui::PushStyleColor(ImGuiCol_ButtonActive,    (ImVec4)ImColor::HSV(0.0f, 0.0f, 0.7f));
+                    }
+
+                }
+                else if(num == "X") {
+                    ImGui::PushStyleColor(ImGuiCol_Button,          (ImVec4)ImColor::HSV(4 / 7.0f, 0.6f, 0.6f));
+                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered,   (ImVec4)ImColor::HSV(4 / 7.0f, 0.7f, 0.7f));
+                    ImGui::PushStyleColor(ImGuiCol_ButtonActive,    (ImVec4)ImColor::HSV(4 / 7.0f, 0.8f, 0.8f));
+                }
+                else if (num == "O") {
+                    ImGui::PushStyleColor(ImGuiCol_Button,          (ImVec4)ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
+                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered,   (ImVec4)ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
+                    ImGui::PushStyleColor(ImGuiCol_ButtonActive,    (ImVec4)ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
+                }
+                string actual = turno? "X" : "O";
+                if (endGame)actual = " ";
+                if (ImGui::Button(num == "_"? actual.c_str() :(num).c_str(), ImVec2(100, 100)))
+                {
+                    if (endGame==false && tablero[i][j] == '_') {
+                        tablero[i][j] = jugador;
+                        turno = !turno;
+                        jugador = turno ? 'X' : 'O';
+                    }
+                }
+                ImGui::PopStyleColor(3);
+                ImGui::PopID();
+                if (j < 3 - 1)
+                    ImGui::SameLine();
+            }
         }
-    }
+        char ganador = CheckGanador();
+        if (ganador != '_') {
+            char buf[32];
+            sprintf(buf, " Ganador %c", ganador);
+            ImGui::Text(buf);
+            endGame = true;
+        }
+
+        if (CheckEmpate() == true && ganador == '_') {
+            char buf[32];
+            sprintf(buf, " Empate ");
+            ImGui::Text(buf);
+            endGame = true;
+        }
+        if (endGame) {
+            if (ImGui::Button("Reset Tick Tac Toe Game",ImVec2(350,50)))
+            {
+                ResetTicTackToe();
+            }
+        }
+    ImGui::EndGroup();
     ImGui::End();
     
 }
@@ -245,7 +289,7 @@ char GUIApp::GuiApplication::CheckGanador()
     {
         if (tablero[0][i] != '_' && tablero[0][i] == tablero[1][i] && tablero[1][i] == tablero[2][i])
         {
-            return tablero[i][0];
+            return tablero[0][i];
         }
     }  
         if (tablero[0][0] != '_' && tablero[0][0] == tablero[1][1] && tablero[1][1] == tablero[2][2])

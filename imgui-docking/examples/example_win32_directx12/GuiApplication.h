@@ -12,6 +12,7 @@ namespace GUIApp {
         char CheckGanador();
         bool CheckEmpate();
         void ResetTicTackToe();
+        void AlignForWidth(float width, float alignment );
         float value;
         bool flag;
         float MAX_Range;
