@@ -24,6 +24,7 @@
     <ClInclude Include="..\..\backends\imgui_impl_dx11.h">
       <Filter>sources</Filter>
     </ClInclude>
+    <ClInclude Include="GuiApplication.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\imgui.cpp">
@@ -50,6 +51,7 @@
     <ClCompile Include="..\..\imgui_tables.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
+    <ClCompile Include="GuiApplication.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.txt" />

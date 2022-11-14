@@ -34,6 +34,9 @@
     <ClCompile Include="..\..\backends\imgui_impl_opengl3.cpp">
       <Filter>sources</Filter>
     </ClCompile>
+    <ClCompile Include="GuiApplication.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\imconfig.h">
@@ -54,6 +57,7 @@
     <ClInclude Include="..\..\backends\imgui_impl_opengl3_loader.h">
       <Filter>sources</Filter>
     </ClInclude>
+    <ClInclude Include="GuiApplication.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.txt" />
