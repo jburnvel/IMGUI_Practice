@@ -1,6 +1,33 @@
 #include "imgui.h"
-#include <string> 
+#include <string>
+#include <vector>
+#include <set>
+#include <list>
 #include "GuiApplication.h"
+#include <iostream>
+
+
+
+
+//-----------------------------------------------------------------------------
+// [SECTION] Helpers
+//-----------------------------------------------------------------------------
+
+// Helper to display a little (?) mark which shows a tooltip when hovered.
+// In your own code you may want to display an actual icon if you are using a merged icon fonts (see docs/FONTS.md)
+static void HelpAppMarker(const char* desc)
+{
+    ImGui::TextDisabled("(?)");
+    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort))
+    {
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted(desc);
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
+} 
+
 
 
 using namespace std;
@@ -16,6 +43,7 @@ GUIApp::GuiApplication::GuiApplication()
     turno = true;
     jugador = turno ? 'X' : 'O';
     endGame = false;
+    ganador = ' ';
 }
 
 GUIApp::GuiApplication::~GuiApplication()
@@ -25,9 +53,11 @@ GUIApp::GuiApplication::~GuiApplication()
 
 void GUIApp::GuiApplication::DrawAppGUI()
 {
-
-
     DockAndMainMenu();
+
+   
+
+    
     ConsolePanel(&value);
     ConsoleWindow(&value);
 }
@@ -119,7 +149,7 @@ void GUIApp::GuiApplication::DockAndMainMenu()
 
 void GUIApp::GuiApplication::AlignForWidth(float width, float alignment = 0.5f)
 {
-    ImGuiStyle& style = ImGui::GetStyle();
+    //ImGuiStyle& style = ImGui::GetStyle();
     float avail = ImGui::GetContentRegionAvail().x;
     float off = (avail - width) * alignment;
     if (off > 0.0f)
@@ -168,7 +198,7 @@ AlignForWidth(width,0.5f);
 
 ImGui::BeginGroup();
     char buf[32];
-    sprintf(buf, "Turno de las %c", jugador);
+    sprintf_s(buf, "Turno de las %c", jugador);
     ImGui::Text(buf);
 
         for (auto i = 0; i < 3; i++)
@@ -227,17 +257,17 @@ ImGui::BeginGroup();
                     ImGui::SameLine();
             }
         }
-        char ganador = CheckGanador();
+        ganador = CheckGanador();
         if (ganador != '_') {
-            char buf[32];
-            sprintf(buf, " Ganador %c", ganador);
+            //char buf[32];
+            sprintf_s(buf, " Ganador %c", ganador);
             ImGui::Text(buf);
             endGame = true;
         }
 
         if (CheckEmpate() == true && ganador == '_') {
-            char buf[32];
-            sprintf(buf, " Empate ");
+            //char buf[32];
+            sprintf_s(buf, " Empate ");
             ImGui::Text(buf);
             endGame = true;
         }
@@ -251,10 +281,72 @@ ImGui::BeginGroup();
     ImGui::End();
     
 }
-
 void GUIApp::GuiApplication::ConsolePanel(float* _value)
 {
     ImGui::Begin("Console");
+    //IMGUI_APP_MARKER("Tables/Basic");
+    HelpAppMarker("Iterators are used to point at the memory addresses of STL containers. They are primarily used in sequences of numbers, characters etc. They reduce the complexity and execution time of the program.");
+    if (ImGui::TreeNode("Iterators  -----------"))
+    {
+        
+        ImGui::Text("Vector int iterator");
+        std::vector<int> vect;
+
+        for (int contador = 1; contador <= 6; ++contador)
+            vect.push_back(contador);
+
+        std::vector<int>::const_iterator it; // declara un iterator de solo lectura
+        it = vect.cbegin(); // 7 lo asigna al comienzo del vector
+        while (it != vect.cend()) // Mientras no ha llegado al final
+        {
+            char buf[32];
+            sprintf_s(buf, "Vect %d ", *it);
+            //ImGui::SameLine();
+            ImGui::Text(buf); // imprime el valor al que apunta tras indireccionarlo
+            ++it; // y pasamos al siguiente elemento
+        }
+
+        ImGui::Separator();
+        ImGui::Text("List int iteratdor");
+        std::list<int> li;
+        for (int contador = 1; contador <= 6; ++contador)
+            li.push_back(contador);
+
+        std::list<int>::const_iterator itl; // declara un iterator de solo lectura
+        itl = li.cbegin(); // 7 lo asigna al comienzo del vector
+        while (itl != li.cend()) // Mientras no ha llegado al final
+        {
+            char buf[32];
+            sprintf_s(buf, "List %d ", *itl);
+            //ImGui::SameLine();
+            ImGui::Text(buf); // imprime el valor al que apunta tras indireccionarlo
+            ++itl; // y pasamos al siguiente elemento
+        }
+
+        ImGui::Separator();
+        ImGui::Text("Set int iteratdor");
+        std::set<int> miset;
+        miset.insert(2);
+        miset.insert(33);
+        miset.insert(63);
+        miset.insert(21);
+        miset.insert(16);
+        miset.insert(88);
+
+        std::set<int>::const_iterator its; // declara un iterator de solo lectura
+        its = miset.cbegin(); // 7 lo asigna al comienzo del vector
+        while (its != miset.cend()) // Mientras no ha llegado al final
+        {
+            char buf[32];
+            sprintf_s(buf, "Set %d - ", *its);
+            //ImGui::SameLine();
+            ImGui::Text(buf); // imprime el valor al que apunta tras indireccionarlo
+            ++its; // y pasamos al siguiente elemento
+        }
+        ImGui::TreePop();
+    }
+
+
 
     if (flag == false)
     {

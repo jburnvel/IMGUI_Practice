@@ -13,12 +13,12 @@ namespace GUIApp {
         bool CheckEmpate();
         void ResetTicTackToe();
         void AlignForWidth(float width, float alignment );
+
         float value;
         bool flag;
         float MAX_Range;
         float MIN_Range;
         int rows, columns;
-
         char tablero[3][3] = { {'_','_','_'},{'_','_','_'},{'_','_','_'} };
         bool turno = false;
         char jugador;
