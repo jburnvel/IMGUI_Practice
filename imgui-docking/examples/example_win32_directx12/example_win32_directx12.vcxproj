@@ -153,6 +153,7 @@
     <ClInclude Include="..\..\backends\imgui_impl_dx12.h" />
     <ClInclude Include="..\..\backends\imgui_impl_win32.h" />
     <ClInclude Include="GuiApplication.h" />
+    <ClInclude Include="TickTacToe.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\imgui.cpp" />
@@ -164,6 +165,7 @@
     <ClCompile Include="..\..\backends\imgui_impl_win32.cpp" />
     <ClCompile Include="GuiApplication.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="TickTacToe.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.txt" />

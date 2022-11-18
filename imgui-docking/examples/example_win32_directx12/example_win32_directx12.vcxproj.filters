@@ -25,6 +25,7 @@
       <Filter>sources</Filter>
     </ClInclude>
     <ClInclude Include="GuiApplication.h" />
+    <ClInclude Include="TickTacToe.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\imgui.cpp">
@@ -52,6 +53,7 @@
       <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="GuiApplication.cpp" />
+    <ClCompile Include="TickTacToe.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.txt" />

@@ -31,7 +31,7 @@ static void HelpAppMarker(const char* desc)
 
 
 using namespace std;
-
+static bool show_app_layout = true;
 GUIApp::GuiApplication::GuiApplication()
 {
     flag = false;
@@ -40,10 +40,8 @@ GUIApp::GuiApplication::GuiApplication()
     MIN_Range = 0.01f;
     rows = 3;
     columns = 3;
-    turno = true;
-    jugador = turno ? 'X' : 'O';
-    endGame = false;
-    ganador = ' ';
+    
+    TickTacGame = new TickTacToe();
 }
 
 GUIApp::GuiApplication::~GuiApplication()
@@ -53,11 +51,9 @@ GUIApp::GuiApplication::~GuiApplication()
 
 void GUIApp::GuiApplication::DrawAppGUI()
 {
-    DockAndMainMenu();
-
-   
-
     
+    DockAndMainMenu();
+    if( show_app_layout  )TickTacToeGameWindow(&show_app_layout);
     ConsolePanel(&value);
     ConsoleWindow(&value);
 }
@@ -189,98 +185,54 @@ void GUIApp::GuiApplication::ConsoleWindow(float* _value)
     ImGui::Separator();
     
     ImGui::End();
+}
 
-ImGui::Begin("TickTacToe");
+void GUIApp::GuiApplication::TickTacToeGameWindow(bool* p_open)
+{
+    static bool no_titlebar = false;
+    static bool no_scrollbar = false;
+    static bool no_menu = true;
+    static bool no_move = false;
+    static bool no_resize = false;
+    static bool no_collapse = false;
+    static bool no_close = false;
+    static bool no_nav = false;
+    static bool no_background = false;
+    static bool no_bring_to_front = false;
+    static bool no_docking = false;
+    static bool unsaved_document = false;
 
-//ImGuiStyle& style = ImGui::GetStyle();
-float width = 300.0f;
-AlignForWidth(width,0.5f);
+    ImGuiWindowFlags window_flags = 0;
+    if (no_titlebar)        window_flags |= ImGuiWindowFlags_NoTitleBar;
+    if (no_scrollbar)       window_flags |= ImGuiWindowFlags_NoScrollbar;
+    if (!no_menu)           window_flags |= ImGuiWindowFlags_MenuBar;
+    if (no_move)            window_flags |= ImGuiWindowFlags_NoMove;
+    if (no_resize)          window_flags |= ImGuiWindowFlags_NoResize;
+    if (no_collapse)        window_flags |= ImGuiWindowFlags_NoCollapse;
+    if (no_nav)             window_flags |= ImGuiWindowFlags_NoNav;
+    if (no_background)      window_flags |= ImGuiWindowFlags_NoBackground;
+    if (no_bring_to_front)  window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
+    if (no_docking)         window_flags |= ImGuiWindowFlags_NoDocking;
+    if (unsaved_document)   window_flags |= ImGuiWindowFlags_UnsavedDocument;
+   // if (no_close)           p_open = NULL; // Don't pass our bool* to Begin
 
-ImGui::BeginGroup();
-    char buf[32];
-    sprintf_s(buf, "Turno de las %c", jugador);
-    ImGui::Text(buf);
-
-        for (auto i = 0; i < 3; i++)
-        {
-            string num = " a ";
-
-            for (auto j = 0; j < 3; j++)
-            {
-                num = tablero[i][j];//to_string(i) + " - " + to_string(j);
-
-
-                ImGui::PushID(i*3+j);
-                if (num == "_") {
-                    
-                    if (!endGame){
-                        ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.0f, 0.0f, 1.0f));
-                        if (turno) {
-                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(4 / 7.0f, 0.7f, 0.7f));
-                            ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(4 / 7.0f, 0.8f, 0.8f));
-                        }
-                        else {
-                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
-                            ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
-                        }
-                    }
-                    else {
-                        ImGui::PushStyleColor(ImGuiCol_Button,          (ImVec4)ImColor::HSV(0.0f, 0.0f, 0.7f));
-                        ImGui::PushStyleColor(ImGuiCol_ButtonHovered,   (ImVec4)ImColor::HSV(0.0f, 0.0f, 0.7f));
-                        ImGui::PushStyleColor(ImGuiCol_ButtonActive,    (ImVec4)ImColor::HSV(0.0f, 0.0f, 0.7f));
-                    }
-
-                }
-                else if(num == "X") {
-                    ImGui::PushStyleColor(ImGuiCol_Button,          (ImVec4)ImColor::HSV(4 / 7.0f, 0.6f, 0.6f));
-                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered,   (ImVec4)ImColor::HSV(4 / 7.0f, 0.7f, 0.7f));
-                    ImGui::PushStyleColor(ImGuiCol_ButtonActive,    (ImVec4)ImColor::HSV(4 / 7.0f, 0.8f, 0.8f));
-                }
-                else if (num == "O") {
-                    ImGui::PushStyleColor(ImGuiCol_Button,          (ImVec4)ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
-                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered,   (ImVec4)ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
-                    ImGui::PushStyleColor(ImGuiCol_ButtonActive,    (ImVec4)ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
-                }
-                string actual = turno? "X" : "O";
-                if (endGame)actual = " ";
-                if (ImGui::Button(num == "_"? actual.c_str() :(num).c_str(), ImVec2(100, 100)))
-                {
-                    if (endGame==false && tablero[i][j] == '_') {
-                        tablero[i][j] = jugador;
-                        turno = !turno;
-                        jugador = turno ? 'X' : 'O';
-                    }
-                }
-                ImGui::PopStyleColor(3);
-                ImGui::PopID();
-                if (j < 3 - 1)
-                    ImGui::SameLine();
-            }
-        }
-        ganador = CheckGanador();
-        if (ganador != '_') {
-            //char buf[32];
-            sprintf_s(buf, " Ganador %c", ganador);
-            ImGui::Text(buf);
-            endGame = true;
-        }
-
-        if (CheckEmpate() == true && ganador == '_') {
-            //char buf[32];
-            sprintf_s(buf, " Empate ");
-            ImGui::Text(buf);
-            endGame = true;
-        }
-        if (endGame) {
-            if (ImGui::Button("Reset Tick Tac Toe Game",ImVec2(350,50)))
-            {
-                ResetTicTackToe();
-            }
-        }
+    //bool f = false;
+    //bool* flag = &f;
+    if(!ImGui::Begin("TickTacToe Game", p_open, window_flags))
+    {
+        // Early out if the window is collapsed, as an optimization.
+        ImGui::End();
+        return;
+    }
+    float widthg = 300.0f;
+    AlignForWidth(widthg, 0.5f);
+    ImGui::BeginGroup();
+    TickTacGame->UpdateGame();
     ImGui::EndGroup();
     ImGui::End();
-    
 }
+
+
 void GUIApp::GuiApplication::ConsolePanel(float* _value)
 {
     ImGui::Begin("Console");
@@ -365,62 +317,8 @@ void GUIApp::GuiApplication::ConsolePanel(float* _value)
         ImGui::SameLine();
     if (ImGui::Button("-100")) { *_value += -100;}
 
+
+    if (ImGui::Button("Open TickTacToe ")) { show_app_layout = true; }
     ImGui::End();
-}
-
-char GUIApp::GuiApplication::CheckGanador()
-{
-    for (auto i = 0; i < 3; i++)
-    {
-        if (tablero[i][0] != '_' && tablero[i][0] == tablero[i][1] && tablero[i][1] == tablero[i][2])
-        {
-            return tablero[i][0];
-        }
-    }
-    for (auto i = 0; i < 3; i++)
-    {
-        if (tablero[0][i] != '_' && tablero[0][i] == tablero[1][i] && tablero[1][i] == tablero[2][i])
-        {
-            return tablero[0][i];
-        }
-    }  
-        if (tablero[0][0] != '_' && tablero[0][0] == tablero[1][1] && tablero[1][1] == tablero[2][2])
-        {
-            return tablero[0][0];
-        }
-        if (tablero[0][2] != '_' && tablero[0][2] == tablero[1][1] && tablero[1][1] == tablero[2][0])
-        {
-            return tablero[0][2];
-        }
-        return '_';
-}
-
-bool GUIApp::GuiApplication::CheckEmpate()
-{
-    for (auto i = 0; i < 3; i++)
-    { 
-        for (auto j = 0; j < 3; j++)
-        {
-            if (tablero[i][j] == '_')
-            {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
-void GUIApp::GuiApplication::ResetTicTackToe()
-{
-    endGame = false;
-    for (auto i = 0; i < 3; i++)
-    {
-        for (auto j = 0; j < 3; j++)
-        {
-             tablero[i][j]='_';
-             
-        }
-    }
-}
-
+} 
 
